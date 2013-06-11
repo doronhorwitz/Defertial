@@ -48,12 +48,12 @@
             });
     }
 
-    jQuery.extend({
-        Defertial: function() {
+    $.extend({
+        Defertial: function Defertial() {
             var deferredFuncList = [];
 
             var defertial = {
-                add: function(func) {
+                add: function add(func) {
 
                     var funcArgs = $.makeArray(arguments).slice(1);
 
@@ -66,7 +66,7 @@
 
                     return this;
                 },
-                run: function(failAllOnReject, initialArguments) {
+                run: function run(failAllOnReject, initialArguments) {
                     if ($.type(failAllOnReject) !== "boolean") {
                         failAllOnReject = false;
                     }
@@ -93,14 +93,12 @@
                     attachHandlersToDeferred(currentDeferred, null, finalDeferred, null, previousReturnValContainObj, failAllOnReject);
 
                     return finalDeferred;
-                },
-                getVersion: function() {
-                    return VERSION;
                 }
-
             };
 
             return defertial;
         }
     });
+
+    $.Defertial.version = VERSION;
 }(window, jQuery));
