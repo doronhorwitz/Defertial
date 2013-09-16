@@ -21,7 +21,8 @@
             isGlobalRejected:   isGlobalRejected,
             previousArgs:       previousArgs,
             deferred:           deferred,
-            previousReturnVal:  previousReturnVal
+            previousReturnVal:  previousReturnVal,
+            isInDefertialQueue: true
         };
     }
 

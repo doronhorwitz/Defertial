@@ -106,7 +106,6 @@ deferredObj.run().done(function(finalDefertialInfo){
 
 Every delayed function that is added to the Defertial queue has the following available to it in
 the `this` context variable (and also within `finalDefertialInfo`).
-
 * **this.deferred**
     * type: Deferred
     * description: every delayed function must used the deferred contained in this parameter to indicated
@@ -130,6 +129,10 @@ the `this` context variable (and also within `finalDefertialInfo`).
     * type: mixed
     * description: delayed functions can return values. If a delayed function returns a value, it will be made available
     to the next delayed function in this parameter.
+* **isInDefertialQueue:**
+    * type: boolean
+    * description: this will always be `true` and is just a means to allow a delayed function to check if it is being run
+    within a Defertial queue, affectively allowing for duck-typing `this`.
 
 A Defertial instance's `.run()` method takes 2 arguments:
 
