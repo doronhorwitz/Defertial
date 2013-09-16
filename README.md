@@ -132,7 +132,8 @@ the `this` context variable (and also within `finalDefertialInfo`).
 * **isInDefertialQueue:**
     * type: boolean
     * description: this will always be `true` and is just a means to allow a delayed function to check if it is being run
-    within a Defertial queue, affectively allowing for duck-typing `this`.
+    within a Defertial queue, affectively allowing for duck-typing `this`. See below for the use of the
+    `$.Defertial.isInDefertialQueue()` function.
 
 A Defertial instance's `.run()` method takes 2 arguments:
 
@@ -148,6 +149,17 @@ A Defertial instance's `.run()` method takes 2 arguments:
     * required: no
     * default: empty array
     * description: the arguments which will appear in the `this.previousArgs` of the first delayed function
+
+The Defertial module also has a utility function:
+```javascript
+$.Defertial.isInDefertialQueue(_this)
+```
+The function returns a boolean indicating if the current delayed function is running in a Defertial queue.
+It takes the following argument:
+* **_this**
+    * type: any
+    * required: yes
+    * description: the current context variable, `this`, should be passed in here to determine if it is a Defertial context
 
 
 License

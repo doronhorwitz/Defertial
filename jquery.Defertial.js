@@ -2,7 +2,7 @@
  * Defertial v0.1.0
  * Doron Horwitz
  * https://github.com/doronhorwitz/Defertial
- * Date: 2013-04-05
+ * Date: 2013-09-16
  *
  * Copyright 2013 Doron Horwitz
  * Released under the BSD New License
@@ -101,5 +101,10 @@
         }
     });
 
-    $.Defertial.version = VERSION;
+    $.extend($.Defertial,{
+        version:            VERSION,
+        isInDefertialQueue: function isInDefertialQueue(_this) {
+            return ($.isPlainObject(_this) && ("isInDefertialQueue" in _this) && (_this.isInDefertialQueue == true));
+        }
+    });
 }(window, jQuery));

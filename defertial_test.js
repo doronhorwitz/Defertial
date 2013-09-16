@@ -3,6 +3,7 @@ function def1(arg1, arg2, arg3) {
 	setTimeout(function(){
 		console.log('***************');
 		console.log('calling def1');
+		console.log('in defertial queue:', $.Defertial.isInDefertialQueue(_this));
 		console.log(_this);
 		console.log(arg1,arg2,arg3);
 		console.log('***************');
@@ -19,6 +20,7 @@ function def2(arg4, arg5, arg6) {
 	setTimeout(function(){
 		console.log('***************');
 		console.log('calling def2');
+		console.log('in defertial queue:', $.Defertial.isInDefertialQueue(_this));
 		console.log(_this);
 		console.log(arg4,arg5,arg6);
 		console.log('***************');
@@ -33,15 +35,15 @@ $(function(){
 	var defertial = $.Defertial();
 	defertial.add(def1,'myarg1','myarg2','myarg3');
 	defertial.add(def2,'myarg4','myarg5','myarg6');
-	defertial.run(false).done(function(thisObj){
+	defertial.run(false).done(function(finalDefertialInfo){
 		console.log('***************');
 		console.log('all complete');
-		console.log(thisObj);
+		console.log(finalDefertialInfo);
 		console.log('***************');
-	}).fail(function(thisObj){
+	}).fail(function(finalDefertialInfo){
 		console.log('***************');
 		console.log('all failed');
-		console.log(thisObj);
+		console.log(finalDefertialInfo);
 		console.log('***************');
 	});
 });
