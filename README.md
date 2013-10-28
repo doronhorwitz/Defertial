@@ -6,9 +6,9 @@ Description
 -----------
 Use jQuery's deferreds in a sequential way.
 
-Deferreds, which use the promise pattern, are useful for delaying tasks to be executed after a certain process has been completed. For example, processing the data returned from an AJAX call. Sometimes there is a need to do a series of delayed tasks one after another; each being executed only after the previous has been completed. For example, an animation, in which an on screen element moves, and then grows and then changes colour. Or a purchasing sequence in which the client has to go through stages of payment authorisation using confirmation data from previous stages to proceed to next stages.
+Deferreds, which use the promise pattern, are useful for delaying tasks to be executed after a certain process has been completed. For example, processing the data returned from an AJAX call. Sometimes there is a need to do a series of delayed tasks one after another; each being executed only after the previous one has completed. For example, an animation, in which an on-screen element moves, then grows and then changes colour. Or a purchasing sequence in which the client has to go through stages of payment authorisation using confirmation data from previous stages to proceed to the next stages.
 
-Whilst jQuery's Deferreds offer the `.then()` method, for multiple sequential stages it results in very confusing code. This is where Defertial steps in. In provides very simple sematics for queueing up a series of functions to be executed one after the other, only once the previous function is resolved or rejected.
+Whilst jQuery's Deferreds offer the `.then()` method, for multiple sequential stages it results in very confusing code. This is where Defertial steps in. It provides very simple sematics for queueing up a series of functions to be executed one after another, only once the previous function is resolved or rejected.
 
 Basic Example
 -------------
@@ -69,7 +69,9 @@ $(function(){
 
 Installation
 ------------
-Include the Javascript after jQuery:
+Requires jQuery (minimum version 1.5, since Defertial uses jQuery's Deferreds).
+
+Include the Defertial Javascript after jQuery:
 ```html
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="jquery.Defertial.js" type="text/javascript"></script>
@@ -94,12 +96,12 @@ function delayedFunction(arg1, arg2) {
     // ... do work and then resolve this.deferred
 }
 
-deferredObj.add(delayedFunction, 'pass in value', 'another pass in value');
+defertialObj.add(delayedFunction, 'pass in value', 'another pass in value');
 ```
 
-**Running the Defertial and attached a function to be called when the sequence is complete:**
+**Running the Defertial and attaching a function to be called when the sequence is complete:**
 ```javascript
-deferredObj.run().done(function(finalDefertialInfo){
+defertialObj.run().done(function(finalDefertialInfo){
     // ... do work after sequence is complete
 })
 ```
@@ -108,19 +110,19 @@ Every delayed function that is added to the Defertial queue has the following av
 the `this` context variable (and also within `finalDefertialInfo`).
 * **this.deferred**
     * type: Deferred
-    * description: every delayed function must used the deferred contained in this parameter to indicated
+    * description: every delayed function must use the deferred contained in this parameter to indicate
     the end of the current delayed function by calling `.resolve()` or `.reject()` on it.
 * **this.isPreviousRejected**
     * type: boolean
     * description: from within the delayed function it is possible to either `.resolve()` or `.reject()`
-    the deferred made available to the function. If it is rejected, then the parameter is set to `true`.
-    The parameter can be used, for example, if a step in an authorisation handshake fails and the logic of
-    the handshake needs to follow an alternate route in this case.
+    the deferred made available to the function. If it is rejected, then this parameter is set to `true`.
+    This parameter can be used, for example, if a step in an authorisation handshake fails and the logic of
+    the handshake needs to abort and show an error to the user.
 * **this.isGlobalRejected**
     * type: boolean
-    * description: it is possible to run Defertial in a mode which says that the whole Defertial will seize
+    * description: it is possible to run Defertial in a mode which specifies that the whole Defertial will seize
     if any added delayed function is rejected (see the `failAllOnReject` argument for `.run()`). In this case,
-    `finalDefertialInfo` will have this paramter set as `true`.
+    `finalDefertialInfo` will have this parameter set as `true`.
 * **this.previousArgs**
     * type: array
     * description: this will contain an array of values sent through the `.resolve()` or `.reject()` within
@@ -132,7 +134,7 @@ the `this` context variable (and also within `finalDefertialInfo`).
 * **isInDefertialQueue:**
     * type: boolean
     * description: this will always be `true` and is just a means to allow a delayed function to check if it is being run
-    within a Defertial queue, affectively allowing for duck-typing `this`. See below for the use of the
+    within a Defertial queue, effectively allowing for duck-typing `this`. See below for the use of the
     `$.Defertial.isInDefertialQueue()` function.
 
 A Defertial instance's `.run()` method takes 2 arguments:
@@ -141,14 +143,14 @@ A Defertial instance's `.run()` method takes 2 arguments:
     * type: boolean
     * required: no
     * default: false
-    * description: if this argument is set to `true` then if any delayed function in the queue rejects its deferred then
-    the entire qeueu will seize calling any attached `.fail()` methods. Also, the `isGlobalRejected` context parameter will be
-    true`
+    * description: if this argument is set to `true`, then if any delayed function in the queue rejects its deferred then
+    the entire queue will seize, calling any attached `.fail()` methods. Also, the `isGlobalRejected` context parameter will be
+    `true`.
 * **initialArguments**
     * type: array
     * required: no
     * default: empty array
-    * description: the arguments which will appear in the `this.previousArgs` of the first delayed function
+    * description: the arguments which will appear in the `this.previousArgs` of the first delayed function.
 
 The Defertial module also has a utility function:
 ```javascript
@@ -159,7 +161,7 @@ It takes the following argument:
 * **_this**
     * type: any
     * required: yes
-    * description: the current context variable, `this`, should be passed in here to determine if it is a Defertial context
+    * description: the current context variable, `this`, should be passed in here to determine if it is a Defertial context.
 
 
 License
