@@ -8,7 +8,7 @@ Use jQuery's deferreds in a sequential way.
 
 Deferreds, which use the promise pattern, are useful for delaying tasks to be executed after a certain process has been completed. For example, processing the data returned from an AJAX call. Sometimes there is a need to do a series of delayed tasks one after another; each being executed only after the previous one has completed. For example, an animation, in which an on-screen element moves, then grows and then changes colour. Or a purchasing sequence in which the client has to go through stages of payment authorisation using confirmation data from previous stages to proceed to the next stages.
 
-Whilst jQuery's Deferreds offer the `.then()` method, for multiple sequential stages it results in very confusing code. This is where Defertial steps in. It provides very simple sematics for queueing up a series of functions to be executed one after another, only once the previous function is resolved or rejected.
+Whilst jQuery's Deferreds offer the `.then()` method, for multiple sequential stages it results in very confusing code. This is where Defertial steps in. It provides very simple sematics for queueing up a series of functions to be executed one after another, only once the previous function is resolved or rejected. Individual functions can be queued up or a single function can be looped over, which each iteration of the loop waits for the deferred of the previous loop to be resolved or rejected.
 
 Basic Example
 -------------
@@ -67,6 +67,34 @@ $(function(){
 });
 ```
 
+Looped example
+-------------
+```javascript
+$(function(){
+    var defertial = $.Defertial();
+
+    //Define the array to be looped over
+    var array = ['val1', 'val2', 'val3'];
+
+    //loop over the array
+    defertial.loop(array, function(index, value){
+            // ... do work using the current value in the array being iterated over
+
+            var _this = this;
+
+            $.ajax('/url.html').done(function(data){
+
+                // ... do more work
+
+                //resolve the deferred to move on to the next item in the array
+                _this.deferred.resolve(data)
+            });
+        }).done(function(finalDefertialInfo){
+                // ... do work after iteration is complete
+            });
+});
+```
+
 Installation
 ------------
 Requires jQuery (minimum version 1.5, since Defertial uses jQuery's Deferreds).
@@ -106,7 +134,14 @@ defertialObj.run().done(function(finalDefertialInfo){
 })
 ```
 
-Every delayed function that is added to the Defertial queue has the following available to it in
+**Running a loop over an array using the Defertial object:**
+```javascript
+defertialObj.loop(array, loopedDelayedFunction).done(function(finalDefertialInfo){
+    // ... do work after iteration is complete
+})
+```
+
+Every delayed function that is added to the Defertial queue (or the looped function) has the following available to it in
 the `this` context variable (and also within `finalDefertialInfo`).
 * **this.deferred**
     * type: Deferred
@@ -152,6 +187,18 @@ A Defertial instance's `.run()` method takes 2 arguments:
     * default: empty array
     * description: the arguments which will appear in the `this.previousArgs` of the first delayed function.
 
+A Defertial instance's `.loop()` method takes 4 arguments:
+
+* **array**
+    * type: array
+    * required: yes
+    * description: the array to be iterated over
+* **func**
+    * type: function
+    * required: yes
+    * description: the delayed function which will be called for all items in the array
+* **failAllOnReject** and **initialArguments**: these two parameters have the same meaning as in the `.run()` method.
+
 The Defertial module also has a utility function:
 ```javascript
 $.Defertial.isInDefertialQueue(_this)
@@ -162,6 +209,7 @@ It takes the following argument:
     * type: any
     * required: yes
     * description: the current context variable, `this`, should be passed in here to determine if it is a Defertial context.
+
 
 
 License

@@ -51,50 +51,56 @@
 
     $.extend({
         Defertial: function Defertial() {
-            var deferredFuncList = [];
+            var deferredFuncList = [],
+                defertial = {
+                    add: function add(func) {
 
-            var defertial = {
-                add: function add(func) {
+                        var funcArgs = $.makeArray(arguments).slice(1);
 
-                    var funcArgs = $.makeArray(arguments).slice(1);
+                        if ($.isFunction(func)) {
+                            deferredFuncList.push({
+                                func: func,
+                                args: funcArgs
+                            });
+                        }
 
-                    if ($.isFunction(func)) {
-                        deferredFuncList.push({
-                            func: func,
-                            args: funcArgs
+                        return this;
+                    },
+                    run: function run(failAllOnReject, initialArguments) {
+                        if ($.type(failAllOnReject) !== "boolean") {
+                            failAllOnReject = false;
+                        }
+
+                        if (arguments.length < 2) {
+                            initialArguments = [];
+                        } else if (!$.isArray(initialArguments)) {
+                            initialArguments = [initialArguments];
+                        }
+
+                        var firstDeferred     = $.Deferred(),
+                            currentDeferred   = firstDeferred.resolve.apply(firstDeferred,initialArguments),
+                            finalDeferred     = $.Deferred(),
+                            previousReturnValContainObj = {
+                                previousReturnVal: null
+                            };
+
+                        $.each(deferredFuncList,function(indexInArray,valueOfElement){
+                            var nextDeferred = $.Deferred();
+                            attachHandlersToDeferred(currentDeferred, nextDeferred, finalDeferred, valueOfElement, previousReturnValContainObj, failAllOnReject);
+                            currentDeferred = nextDeferred;
                         });
+
+                        attachHandlersToDeferred(currentDeferred, null, finalDeferred, null, previousReturnValContainObj, failAllOnReject);
+
+                        return finalDeferred;
+                    },
+                    loop: function loop(array, func, failAllOnReject, initialArguments) {
+                        var _this = this;
+                        $.each(array, function(index, value){
+                            _this.add(func, index, value);
+                        });
+                        return this.run(failAllOnReject, initialArguments);
                     }
-
-                    return this;
-                },
-                run: function run(failAllOnReject, initialArguments) {
-                    if ($.type(failAllOnReject) !== "boolean") {
-                        failAllOnReject = false;
-                    }
-
-                    if (arguments.length < 2) {
-                        initialArguments = [];
-                    } else if (!$.isArray(initialArguments)) {
-                        initialArguments = [initialArguments];
-                    }
-
-                    var firstDeferred     = $.Deferred(),
-                        currentDeferred   = firstDeferred.resolve.apply(firstDeferred,initialArguments),
-                        finalDeferred     = $.Deferred(),
-                        previousReturnValContainObj = {
-                            previousReturnVal: null
-                        };
-
-                    $.each(deferredFuncList,function(indexInArray,valueOfElement){
-                        var nextDeferred = $.Deferred();
-                        attachHandlersToDeferred(currentDeferred, nextDeferred, finalDeferred, valueOfElement, previousReturnValContainObj, failAllOnReject);
-                        currentDeferred = nextDeferred;
-                    });
-
-                    attachHandlersToDeferred(currentDeferred, null, finalDeferred, null, previousReturnValContainObj, failAllOnReject);
-
-                    return finalDeferred;
-                }
             };
 
             return defertial;
