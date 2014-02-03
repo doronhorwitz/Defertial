@@ -55,6 +55,15 @@ $(function(){
         console.log('***************');
     }).always(function(){
         var loopedDefertial = $.Defertial();
-        defertial.loop(['loopedArg1', 'loopedArg2', 'loopedArg3'], loopedDef);
+        defertial.loop(['loopedArg1', 'loopedArg2', 'loopedArg3'], loopedDef).always(function(){
+            console.log('***************');
+            $('head,body').defertialEach(function(index,Element){
+                console.log($(Element));
+                var _this = this;
+                setTimeout(function(){
+                    _this.deferred.resolve();
+                },2000)
+            });
+        });
     });
 });

@@ -210,7 +210,16 @@ It takes the following argument:
     * required: yes
     * description: the current context variable, `this`, should be passed in here to determine if it is a Defertial context.
 
-
+Defertial can be used to loop over a jQuery as well:
+```javascript
+$(...).defertialEach(func)
+```
+The callback function is similar to the loop in the normal jQuery `.each()` method, but the `this` is the Defertial context and function must resolve or reject the deferred in the `this` to move on to the next iteration. `.defertialEach()` takes the following arguments:
+* **func**
+    * type: function
+    * required: yes
+    * description: the delayed function which will be called for all items in the jQuery
+* **failAllOnReject** and **initialArguments**: these two parameters have the same meaning as in the `.run()` method.
 
 License
 -------

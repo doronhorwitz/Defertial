@@ -107,6 +107,13 @@
         }
     });
 
+    $.fn.extend({
+        defertialEach: function(callback, failAllOnReject, initialArguments) {
+            var defertialInst = $.Defertial();
+            return defertialInst.loop($.makeArray(this), callback, failAllOnReject, initialArguments);
+        }
+    });
+
     $.extend($.Defertial,{
         version:            VERSION,
         isInDefertialQueue: function isInDefertialQueue(_this) {
