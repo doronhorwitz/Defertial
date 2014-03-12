@@ -55,7 +55,7 @@ $(function(){
         console.log('***************');
     }).always(function(){
         var loopedDefertial = $.Defertial();
-        defertial.loop(['loopedArg1', 'loopedArg2', 'loopedArg3'], loopedDef).always(function(){
+        loopedDefertial.loop(['loopedArg1', 'loopedArg2', 'loopedArg3'], loopedDef).always(function(){
             console.log('***************');
             $('head,body').defertialEach(function(index,Element){
                 console.log($(Element));
