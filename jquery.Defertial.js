@@ -1,8 +1,8 @@
 /*!
- * Defertial v0.1.1
+ * Defertial v0.1.2
  * Doron Horwitz
  * https://github.com/doronhorwitz/Defertial
- * Date: 2014-02-03
+ * Date: 2014-03-12
  *
  * Copyright 2014 Doron Horwitz
  * Released under the BSD New License
@@ -13,7 +13,7 @@
 ;(function(window, $, undefined) {
     "use strict";
 
-    var VERSION = "0.1.1";
+    var VERSION = "0.1.2";
 
     function createThisObj(isPreviousRejected, isGlobalRejected, previousArgs, deferred, previousReturnVal) {
         return {
@@ -50,66 +50,78 @@
     }
 
     $.extend({
-        Defertial: function Defertial() {
-            var deferredFuncList = [],
-                defertial = {
-                    add: function add(func) {
-
-                        var funcArgs = $.makeArray(arguments).slice(1);
-
-                        if ($.isFunction(func)) {
-                            deferredFuncList.push({
-                                func: func,
-                                args: funcArgs
-                            });
-                        }
-
-                        return this;
-                    },
-                    run: function run(failAllOnReject, initialArguments) {
-                        if ($.type(failAllOnReject) !== "boolean") {
-                            failAllOnReject = false;
-                        }
-
-                        if (arguments.length < 2) {
-                            initialArguments = [];
-                        } else if (!$.isArray(initialArguments)) {
-                            initialArguments = [initialArguments];
-                        }
-
-                        var firstDeferred     = $.Deferred(),
-                            currentDeferred   = firstDeferred.resolve.apply(firstDeferred,initialArguments),
-                            finalDeferred     = $.Deferred(),
-                            previousReturnValContainObj = {
-                                previousReturnVal: null
-                            };
-
-                        $.each(deferredFuncList,function(indexInArray,valueOfElement){
-                            var nextDeferred = $.Deferred();
-                            attachHandlersToDeferred(currentDeferred, nextDeferred, finalDeferred, valueOfElement, previousReturnValContainObj, failAllOnReject);
-                            currentDeferred = nextDeferred;
-                        });
-
-                        attachHandlersToDeferred(currentDeferred, null, finalDeferred, null, previousReturnValContainObj, failAllOnReject);
-
-                        return finalDeferred;
-                    },
-                    loop: function loop(array, func, failAllOnReject, initialArguments) {
-                        var _this = this;
-                        $.each(array, function(index, value){
-                            _this.add(func, index, value);
-                        });
-                        return this.run(failAllOnReject, initialArguments);
-                    }
+        //using solution in http://stackoverflow.com/a/13856820/506770 to make deferredFuncList "private"
+        //while defining Defertial's "public" functions through prototypes
+        //(solution leaves '_instID' visible externally, though)
+        Defertial: (function() {
+            var deferredFuncLists = [],
+                instIDCounter     = 0;
+            function Defertial(constructing) {
+                if ((this instanceof Defertial) || (constructing === "constructing")) {
+                    this._instID = instIDCounter++;
+                    deferredFuncLists[this._instID] = [];
+                } else {
+                    return new Defertial("constructing");
+                }
             };
+            $.extend(Defertial.prototype,{
+                add: function add(func) {
 
-            return defertial;
-        }
+                    var funcArgs = $.makeArray(arguments).slice(1);
+
+                    if ($.isFunction(func)) {
+                        deferredFuncLists[this._instID].push({
+                            func: func,
+                            args: funcArgs
+                        });
+                    }
+
+                    return this;
+                },
+                run: function run(failAllOnReject, initialArguments) {
+                    if ($.type(failAllOnReject) !== "boolean") {
+                        failAllOnReject = false;
+                    }
+
+                    if (arguments.length < 2) {
+                        initialArguments = [];
+                    } else if (!$.isArray(initialArguments)) {
+                        initialArguments = [initialArguments];
+                    }
+
+                    var firstDeferred     = $.Deferred(),
+                        currentDeferred   = firstDeferred.resolve.apply(firstDeferred,initialArguments),
+                        finalDeferred     = $.Deferred(),
+                        previousReturnValContainObj = {
+                            previousReturnVal: null
+                        };
+
+                    $.each(deferredFuncLists[this._instID],function(indexInArray,valueOfElement){
+                        var nextDeferred = $.Deferred();
+                        attachHandlersToDeferred(currentDeferred, nextDeferred, finalDeferred, valueOfElement, previousReturnValContainObj, failAllOnReject);
+                        currentDeferred = nextDeferred;
+                    });
+
+                    attachHandlersToDeferred(currentDeferred, null, finalDeferred, null, previousReturnValContainObj, failAllOnReject);
+
+                    return finalDeferred;
+                },
+                loop: function loop(array, func, failAllOnReject, initialArguments) {
+                    var _this = this;
+                    $.each(array, function(index, value){
+                        _this.add(func, index, value);
+                    });
+                    return this.run(failAllOnReject, initialArguments);
+                }
+            });
+
+            return Defertial;
+        })()
     });
 
     $.fn.extend({
         defertialEach: function(callback, failAllOnReject, initialArguments) {
-            var defertialInst = $.Defertial();
+            var defertialInst = new $.Defertial();
             return defertialInst.loop($.makeArray(this), callback, failAllOnReject, initialArguments);
         }
     });
