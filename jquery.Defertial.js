@@ -56,12 +56,12 @@
         Defertial: (function() {
             var deferredFuncLists = [],
                 instIDCounter     = 0;
-            function Defertial(constructing) {
-                if ((this instanceof Defertial) || (constructing === "constructing")) {
+            function Defertial() {
+                if (this instanceof Defertial) {
                     this._instID = instIDCounter++;
                     deferredFuncLists[this._instID] = [];
                 } else {
-                    return new Defertial("constructing");
+                    return new Defertial();
                 }
             };
             $.extend(Defertial.prototype,{
