@@ -35,11 +35,12 @@
                     previousReturnValContainObj.previousReturnVal = funcObj.func.apply(thisObj,funcObj.args);
                 }
             }).fail(function(){
+                var thisObj;
                 if (failAllOnReject) {
-                    var thisObj = createThisObj(true,true,$.makeArray(arguments), nextDeferred, previousReturnValContainObj.previousReturnVal);
+                    thisObj = createThisObj(true,true,$.makeArray(arguments), nextDeferred, previousReturnValContainObj.previousReturnVal);
                     finalDeferred.reject(thisObj);
                 } else {
-                    var thisObj = createThisObj(true,false,$.makeArray(arguments), nextDeferred, previousReturnValContainObj.previousReturnVal);
+                    thisObj = createThisObj(true,false,$.makeArray(arguments), nextDeferred, previousReturnValContainObj.previousReturnVal);
                     if (funcObj === null) {
                         finalDeferred.reject(thisObj);
                     } else {
@@ -63,7 +64,7 @@
                 } else {
                     return new Defertial();
                 }
-            };
+            }
             $.extend(Defertial.prototype,{
                 add: function add(func) {
 
@@ -129,7 +130,7 @@
     $.extend($.Defertial,{
         version:            VERSION,
         isInDefertialQueue: function isInDefertialQueue(_this) {
-            return ($.isPlainObject(_this) && ("isInDefertialQueue" in _this) && (_this.isInDefertialQueue == true));
+            return ($.isPlainObject(_this) && ("isInDefertialQueue" in _this) && (_this.isInDefertialQueue === true));
         }
     });
 }(window, jQuery));
